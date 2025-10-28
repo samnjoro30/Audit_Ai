@@ -3,11 +3,17 @@ import cors from 'cors';
 import express from 'express';
 import http from 'http';
 import Logger from './config/logger.js';
+import helmet from 'helmet';
 import 'dotenv.config';
 
 
 const app = express();
 app.use(express.json());
+app.use(helmet(
+    {
+        contentSecurityPolicy: false,
+    }
+));
 
 app.get('/', (req, res) => {
     res.send('AuditAI Backend is running');
