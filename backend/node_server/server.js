@@ -5,12 +5,16 @@ import http from 'http';
 import Logger from './config/logger.js';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import 'dotenv.config';
+import cookieParser from 'cookie-parser';
+import 'dotenv/config';
+import { time } from 'console';
+import { uptime } from 'process';
 
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(morgan('combined', { stream: { write: message => Logger.info(message.trim()) } }));
 app.use(helmet(
     {
@@ -19,8 +23,18 @@ app.use(helmet(
 ));
 
 app.get('/', (req, res) => {
-    res.send('AuditAI Backend is running');
+    res.status(200).json({
+        status: 'success',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        message: 'Welcome to the AuditAI API'
+    });
     Logger.info('Root endpoint accessed');
+});
+
+app.get('/health', (req, res) => {
+    res.status(200).send('OK');
+    Logger.info('Health check endpoint accessed');
 });
 
 const server = http.createServer(app);
