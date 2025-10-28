@@ -5,7 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "repository":{
+    "type": "git",
+    "url": "https://github.com/samnjoro30/Audit_Ai.git"
   },
   "keywords": [],
   "author": "",
@@ -15,5 +23,12 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "http": "^0.0.1-security"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.38.0",
+    "eslint": "^9.38.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "prettier": "^3.6.2"
   }
 }
