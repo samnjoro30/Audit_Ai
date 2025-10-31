@@ -6,7 +6,10 @@ import Logger from './config/logger.js';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import compression from 'compression';
 import 'dotenv/config';
+import cluster from 'cluster'
+import os from 'os';
 import { time } from 'console';
 import { uptime } from 'process';
 
@@ -15,12 +18,36 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(morgan('combined', { stream: { write: message => Logger.info(message.trim()) } }));
+app.disable('x-powered-by');
+app.use(compression());
+app.use(morgan('combined', { 
+    stream: { write: message => Logger.info(message.trim()) 
+} }));
 app.use(helmet(
     {
-        contentSecurityPolicy: false,
+        
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: ["'self'", "https://trusted.cdn.com"],
+                styleSrc: ["'self'", "https://trusted.cdn.com"],
+                imgSrc: ["'self'", "data:", "https://trusted.cdn.com"],
+                connectSrc: ["'self'", "https://api.trusted.com"],
+                fontSrc: ["'self'", "https://fonts.gstatic.com"],
+                objectSrc: ["'none'"],
+                upgradeInsecureRequests: [],
+            },
+        },
     }
 ));
+const CorsOptions = {
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    optionsSuccessStatus: 200,
+    Credentials: true,
+};
+app.use(cors(CorsOptions));
 
 app.get('/', (req, res) => {
     res.status(200).json({
@@ -35,6 +62,13 @@ app.get('/', (req, res) => {
 app.get('/health', (req, res) => {
     res.status(200).send('OK');
     Logger.info('Health check endpoint accessed');
+});
+
+process.on('SIGTERM', () => {
+    server.close(() => {
+        Logger.info('Graceful shutdown');
+        process.exit(0);
+    });
 });
 
 const server = http.createServer(app);
