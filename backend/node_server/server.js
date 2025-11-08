@@ -7,12 +7,15 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import compression from 'compression';
+
 import 'dotenv/config';
 import cluster from 'cluster'
 import os from 'os';
 import { time } from 'console';
 import { uptime } from 'process';
 
+//routes 
+import authRoutes from './routes/authRoutes.js';
 
 const app = express();
 app.use(express.json());
@@ -48,6 +51,9 @@ const CorsOptions = {
     Credentials: true,
 };
 app.use(cors(CorsOptions));
+
+//  Routes
+app.use('auth', authRoutes);
 
 app.get('/', (req, res) => {
     res.status(200).json({
