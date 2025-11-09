@@ -13,6 +13,10 @@ import cluster from 'cluster'
 import os from 'os';
 import { time } from 'console';
 import { uptime } from 'process';
+import xssClean from 'xss-clean';
+import mongoSanitize from 'express-mongo-sanitize';
+
+
 
 //routes 
 import authRoutes from './routes/authRoutes.js';
@@ -23,6 +27,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.disable('x-powered-by');
 app.use(compression());
+app.use(xssClean());
+app.use(mongoSanitize());
 app.use(morgan('combined', { 
     stream: { write: message => Logger.info(message.trim()) 
 } }));
@@ -48,12 +54,12 @@ const CorsOptions = {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     optionsSuccessStatus: 200,
-    Credentials: true,
+    credentials: true,
 };
 app.use(cors(CorsOptions));
 
 //  Routes
-app.use('auth', authRoutes);
+app.use('/auth', authRoutes);
 
 app.get('/', (req, res) => {
     res.status(200).json({
@@ -70,6 +76,9 @@ app.get('/health', (req, res) => {
     Logger.info('Health check endpoint accessed');
 });
 
+const server = http.createServer(app);
+
+
 process.on('SIGTERM', () => {
     server.close(() => {
         Logger.info('Graceful shutdown');
@@ -77,7 +86,6 @@ process.on('SIGTERM', () => {
     });
 });
 
-const server = http.createServer(app);
 
 const port =process.env.PORT || 5000;
 

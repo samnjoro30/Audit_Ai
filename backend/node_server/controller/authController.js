@@ -1,46 +1,41 @@
-import Company from '../model/User';
+import Company from '../model/User.js';
 import bcrypt from 'bcrypt';
 
+export const register = async (req, res) => {
+    try {
+        const { email, userId, name, password } = req.body;
 
-const register = async (req, res) => {
-    const { email, userId, name, password } = req.body;
+        if (!email || !userId || !name || !password) {
+            return res.status(400).json({ message: "All fields are required" });
+        }
 
-    if(!email) return res.status(400).json({
-        message: "Email is required"
-    })
-    if(!userId) return res.status(400).json({
-        message: "User ID is required"
-    })
-    if(!name) return res.status(400).json({
-        message: "Name is required"
-    })
-    if(!password) return res.status(400).json({
-        message: "Password is required"
-    })
+        // Check if user exists already
+        const exists = await Company.findOne({ email });
+        if (exists) {
+            return res.status(409).json({ message: "Email already registered" });
+        }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-    const company = new Company({
-        userId: userId,
-        name: name,
-        email: email,
-        password: hashedPassword
-    })
+        const company = new Company({
+            userId,
+            name,
+            email,
+            password: hashedPassword
+        });
 
-    await company.save();
+        await company.save();
 
-    return res.status(200).json({
-        message: 'company registered successfully'
-    })
+        return res.status(201).json({
+            message: 'Company registered successfully'
+        });
 
+    } catch (error) {
+        console.error("Registration Error:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+};
 
-}
-
-const login = () => {
-
-}
-
-export default {
-    register,
-    login
-}
+export const login = async (req, res) => {
+    return res.status(200).json({ message: "Login endpoint" });
+};
