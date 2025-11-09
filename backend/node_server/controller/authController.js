@@ -3,9 +3,9 @@ import bcrypt from 'bcrypt';
 
 export const register = async (req, res) => {
     try {
-        const { email, userId, name, password } = req.body;
+        const { email, name, password } = req.body;
 
-        if (!email || !userId || !name || !password) {
+        if (!email || !name || !password) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
@@ -18,7 +18,6 @@ export const register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const company = new Company({
-            userId,
             name,
             email,
             password: hashedPassword

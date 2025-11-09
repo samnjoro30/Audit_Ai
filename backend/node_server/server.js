@@ -16,10 +16,12 @@ import { uptime } from 'process';
 import xssClean from 'xss-clean';
 import mongoSanitize from 'express-mongo-sanitize';
 
-
+import connectToNoSQLDatabase from './config/database_nosql.js';
 
 //routes 
 import authRoutes from './routes/authRoutes.js';
+
+connectToNoSQLDatabase();
 
 const app = express();
 app.use(express.json());
