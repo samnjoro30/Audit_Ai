@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
 
 interface FormData {
     companyname: string;
@@ -9,7 +9,8 @@ interface FormData {
 }
 
 const Register= () => {
-    
+    const [message, setMessage] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
     const [formData, setFormData] = useState<FormData>({
         companyname: '',
         password: '',
@@ -26,13 +27,27 @@ const Register= () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const res = await axios.post('/auth/register', formData);
-        console.log(res.data);
+        setMessage(''); 
+        setLoading(true);
+        try{
+            const res = await axiosInstance.post('/auth/register', formData);
+
+            setMessage( res.data.message || 'Registration successful!' );
+            setTimeout(() => { setMessage('')}, 3000);
+            
+        }catch(err){
+            const error = err instanceof Error ? err : new Error('An unknown error occurred');
+            console.error('Registration error:', error);
+
+        }finally{
+            setLoading(false);
+        }
+       
     };
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
+        <div className="">
+            <form onSubmit={handleSubmit} className="">
                 <div>
                     <label>Company name:</label>
                     <input
