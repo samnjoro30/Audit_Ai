@@ -5,9 +5,9 @@ import { db } from '../config/database_sql.js';
 
 export const register = async (req, res) => {
     try {
-        const { email, name, password } = req.body;
+        const { email, companyname, phonenumber, password } = req.body;
 
-        if (!email || !name || !password) {
+        if (!email || !companyname || !password || !phonenumber) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
@@ -25,11 +25,11 @@ export const register = async (req, res) => {
 
         await db.insert(users).values({
             email,
-            name,
-            password: hashed,
+            companyname,
+            phonenumber,
+            password: hashedPassword,
           });
 
-        await company.save();
 
         return res.status(201).json({
             message: 'Company registered successfully'
