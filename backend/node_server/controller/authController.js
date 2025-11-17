@@ -1,5 +1,7 @@
-import Company from '../model/User.js';
+import { users } from '../schema/User.js';
 import bcrypt from 'bcrypt';
+import { eq } from "drizzle-orm";
+import { db } from '../config/database_sql.js';
 
 export const register = async (req, res) => {
     try {
@@ -10,18 +12,22 @@ export const register = async (req, res) => {
         }
 
         // Check if user exists already
-        const exists = await Company.findOne({ email });
-        if (exists) {
+        const existingUser = await db
+           .select()
+           .from(users)
+           .where(eq(users.email, email));
+
+        if (existingUser.length > 0) {
             return res.status(409).json({ message: "Email already registered" });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const company = new Company({
-            name,
+        await db.insert(users).values({
             email,
-            password: hashedPassword
-        });
+            name,
+            password: hashed,
+          });
 
         await company.save();
 

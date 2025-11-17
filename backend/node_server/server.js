@@ -7,7 +7,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import compression from 'compression';
-
+import "./config/database_sql.js";  
 import 'dotenv/config';
 import cluster from 'cluster'
 import os from 'os';
