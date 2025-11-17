@@ -10,6 +10,7 @@ interface FormData {
 
 const Register= () => {
     const [message, setMessage] = useState<string>('');
+    const [error, setError] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [formData, setFormData] = useState<FormData>({
         companyname: '',
@@ -28,6 +29,7 @@ const Register= () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setMessage(''); 
+        setError('');
         setLoading(true);
         try{
             const res = await axiosInstance.post('/auth/register', formData);
@@ -38,18 +40,17 @@ const Register= () => {
         }catch(err){
             const error = err instanceof Error ? err : new Error('An unknown error occurred');
             console.error('Registration error:', error);
-
+            setError( error.message || 'Registration failed. Please try again.' );
         }finally{
             setLoading(false);
         }
-       
     };
 
     return (
-        <div className="">
+        <div className="bg-gray-100 rounded-xl p-4">
             <form onSubmit={handleSubmit} className="">
                 <div>
-                    <label>Company name:</label>
+                    <label className="text-gray-900">Company name:</label>
                     <input
                       type="text"
                       name="companyname"
@@ -59,7 +60,27 @@ const Register= () => {
                     />
                 </div>
                 <div>
-                    <label>Password:</label>
+                    <label className="text-gray-900">Phone:</label>
+                    <input
+                       type="tel"
+                       name="phonenumber"
+                       value={formData.phonenumber}
+                       onChange={handleChange}
+                       required
+                    />
+                </div>
+                <div>
+                    <label className="text-gray-900">Email:</label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                    />
+                </div>
+                <div>
+                    <label className="text-gray-900">Password:</label>
                     <input
                       type="password"
                       name="password"
@@ -68,28 +89,16 @@ const Register= () => {
                       required
                     />
                 </div>
-                <div>
-                <label>Email:</label>
-                <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                />
-            </div>
-            <div>
-                <label>Phone:</label>
-                <input
-                    type="tel"
-                    name="phonenumber"
-                    value={formData.phonenumber}
-                    onChange={handleChange}
-                    required
-                />
-            </div>
-            <button type="submit">Register</button>
+            <button 
+              type="submit" 
+              disabled={loading}
+              className=""
+            >
+                Register
+            </button>
         </form>
+        { message && <p className="text-green-800">{message}</p> }
+        { error && <p className="text-red-600">{error}</p> }
         </div>
     );
 };
