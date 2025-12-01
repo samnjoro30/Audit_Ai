@@ -42,5 +42,17 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
+    const {email, password} = req.body;
+    const existingEmail = await db
+       .select()
+       .from(users)
+       .where(eq(users.email, email));
+    
+    if (!existingEmail){
+        return res.status(409).json({ message: "Email not registered" });
+    }
+
+    const verifyPassword = await bcrypt.compare(password, )
+
     return res.status(200).json({ message: "Login endpoint" });
 };
