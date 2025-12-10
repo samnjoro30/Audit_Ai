@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axiosInstance from '../api/axiosInstance';
-
+import { useNavigate } from 'react-router-dom';
 interface FormData {
     companyname: string;
     password: string;
@@ -18,6 +18,7 @@ const Register= () => {
         email: '',
         phonenumber: '',
     });
+    const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -36,6 +37,7 @@ const Register= () => {
 
             setMessage( res.data.message || 'Registration successful!' );
             setTimeout(() => { setMessage('')}, 3000);
+            navigate('/dashboard');
             
         }catch(err){
             const error = err instanceof Error ? err : new Error('An unknown error occurred');
