@@ -44,7 +44,7 @@ const CorsOptions = {
 app.use(cors(CorsOptions));
 
 //  Routes
-//app.use('/auth', import('./routes/authRoutes.js').then(module => module.default));
+//app.use('/auth', import('./routes/authRoutes.js'));
 app.use('/auth', authRoutes);
 
 app.get('/', (req, res) => {
@@ -71,7 +71,6 @@ process.on('SIGTERM', () => {
         process.exit(0);
     });
 });
-
 
 const port =process.env.PORT || 5000;
 
