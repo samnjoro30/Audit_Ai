@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import Header from '../components/header';
 import Sidebar from '../components/sidebar';
+import Overview from '../components/overView';
+import Audit from '../components/audit';
 
 const Dashboard = () => {
     const [activePage, setActivePage] = useState<string>('Overview');
@@ -9,9 +11,9 @@ const Dashboard = () => {
     const renderPage = () => {
         switch (activePage) {
             case 'Overview':
-                return <div>Overview Content</div>;
+                return < Overview/>;
             case 'Audit':
-                return <div>Audit Component</div>;
+                return < Audit/>;
             case 'History':
                 return <div>History Logs</div>;
             case 'Reports':
