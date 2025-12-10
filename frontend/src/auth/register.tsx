@@ -47,7 +47,7 @@ const Register= () => {
     };
 
     return (
-        <div className="bg-gray-100 rounded-xl p-4">
+        <div className="">
             <form onSubmit={handleSubmit} className="">
                 <div>
                     <label className="text-gray-900">Company name:</label>

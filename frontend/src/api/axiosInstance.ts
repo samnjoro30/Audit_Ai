@@ -1,7 +1,44 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:5000', // Replace with your backend URL
+    baseURL: 'http://localhost:5000',
+    withCredentials: true,
 });
+axiosInstance.interceptors.request.use(
+    (config) => {
+        config.withCredentials = true;
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+  
+  );
+  axiosInstance.interceptors.response.use(
+    (response) => response,
+    async (error) =>{
+        const originalRequest = error.config;
+  
+        if(originalRequest.url.includes('/auth/refresh-token')){
+            window.location.href="/auth/login"
+            return Promise.reject(error);
+        }
+        if(error.response && error.response.status===401){
+            try{
+               await axiosInstance.post("/auth/refresh-token", {}, {withCredentials: true});
+               return axiosInstance(originalRequest);
+            }
+            catch(refreshError){
+               window.location.href="/auth/login"
+               return Promise.reject(refreshError);
+            }
+        }
+        return Promise.reject(error);
+    }
+  );
+  
+  axiosInstance.defaults.withCredentials=true
+  
+  
 
 export default axiosInstance;
