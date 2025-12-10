@@ -18,7 +18,7 @@ import connectToNoSQLDatabase from './config/database_nosql.js';
 //routes 
 import authRoutes from './routes/authRoutes.js';
 
-connectToNoSQLDatabase();
+//connectToNoSQLDatabase();
 
 const app = express();
 app.use(express.json());
@@ -44,6 +44,7 @@ const CorsOptions = {
 app.use(cors(CorsOptions));
 
 //  Routes
+//app.use('/auth', import('./routes/authRoutes.js').then(module => module.default));
 app.use('/auth', authRoutes);
 
 app.get('/', (req, res) => {
